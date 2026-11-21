@@ -1,0 +1,1133 @@
+{
+  "info": {
+    "name": "XPAND · API (Flask)",
+    "description": "Colección para probar la API del panel de catálogo XPAND.\n\nUso:\n1. Importa también el environment `XPAND.postman_environment.json` y selecciónalo (o usa las variables de la colección).\n2. Ejecuta **Auth › Login (coordinador)**. El script guarda el token JWT en la variable `token` automáticamente; el resto de requests ya lo usan.\n3. Para probar permisos de editor, ejecuta **Auth › Login (editor)**.\n\nBase: {{base_url}} (por defecto http://localhost:5000).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (coordinador)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json();",
+                  "if (d.token) {",
+                  "  pm.collectionVariables.set('token', d.token);",
+                  "  console.log('Token guardado para', d.user && d.user.correo);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"coordinador@xpand.co\",\n  \"password\": \"xpand2026\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login (editor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200 OK', () => pm.response.to.have.status(200));",
+                  "const d = pm.response.json();",
+                  "if (d.token) pm.collectionVariables.set('token', d.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"editor@xpand.co\",\n  \"password\": \"xpand2026\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Solicitar clave (pública)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/solicitar-clave",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "solicitar-clave"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"editor@xpand.co\"\n}"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar clave",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actual\": \"xpand2026\",\n  \"nueva\": \"NuevaClave123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/cambiar-clave",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "cambiar-clave"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "stats"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cobertura por barrio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/cobertura",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "cobertura"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cola de revisión (solo coordinador)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/cola-revision",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "cola-revision"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lugares",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lugares",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener (l-1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lugares/l-1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "l-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const d = pm.response.json();",
+                  "if (d.id) pm.collectionVariables.set('lugar_id', d.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Jardín Botánico (prueba)\",\n  \"categoria\": \"Naturaleza\",\n  \"barrio\": \"Boston\",\n  \"costo\": 0,\n  \"descripcion\": \"Lugar de prueba creado desde Postman.\",\n  \"direccion\": \"Cra. 52 #73-298\",\n  \"coords\": \"6.2510, -75.5640\",\n  \"horario\": \"Todos los días\",\n  \"reserva\": \"No\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lugares",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar ({{lugar_id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"Descripción actualizada desde Postman.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lugares/{{lugar_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "{{lugar_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enviar a revisión ({{lugar_id}})",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lugares/{{lugar_id}}/enviar-revision",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "{{lugar_id}}",
+                "enviar-revision"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publicar ({{lugar_id}}) · solo coordinador",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lugares/{{lugar_id}}/publicar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "{{lugar_id}}",
+                "publicar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Devolver ({{lugar_id}}) · comentario obligatorio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Falta confirmar el horario antes de publicar.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lugares/{{lugar_id}}/devolver",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "{{lugar_id}}",
+                "devolver"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Borrar ({{lugar_id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/lugares/{{lugar_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lugares",
+                "{{lugar_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retos",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Vista previa de puntos (lugarId=l-3 → 65 XP)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos/points-preview?lugarId=l-3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "points-preview"
+              ],
+              "query": [
+                {
+                  "key": "lugarId",
+                  "value": "l-3"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener (r-1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos/r-1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "r-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('201 Created', () => pm.response.to.have.status(201));",
+                  "const d = pm.response.json();",
+                  "if (d.id) pm.collectionVariables.set('reto_id', d.id);",
+                  "console.log('Puntos calculados:', d.puntos);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Reto de prueba\",\n  \"lugarId\": \"l-1\",\n  \"tipo\": \"Visita\",\n  \"instruccion\": \"Instrucción de ejemplo para el usuario.\",\n  \"insigniaId\": null\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/retos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar ({{reto_id}}) - recalcula puntos",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"Recorrido\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/retos/{{reto_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "{{reto_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enviar a revisión ({{reto_id}})",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos/{{reto_id}}/enviar-revision",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "{{reto_id}}",
+                "enviar-revision"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publicar ({{reto_id}}) · solo coordinador",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos/{{reto_id}}/publicar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "{{reto_id}}",
+                "publicar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Devolver ({{reto_id}})",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Ajusta la instrucción.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/retos/{{reto_id}}/devolver",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "{{reto_id}}",
+                "devolver"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Borrar ({{reto_id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/retos/{{reto_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "retos",
+                "{{reto_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Insignias",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insignias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener (i-1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insignias/i-1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "i-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const d = pm.response.json();",
+                  "if (d.id) pm.collectionVariables.set('insignia_id', d.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Insignia de prueba\",\n  \"condicion\": \"Completar 3 retos de cultura\",\n  \"requisito\": \"3 retos\",\n  \"xp\": 20\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/insignias",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar ({{insignia_id}})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"xp\": 25\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/insignias/{{insignia_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "{{insignia_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Enviar a revisión ({{insignia_id}})",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insignias/{{insignia_id}}/enviar-revision",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "{{insignia_id}}",
+                "enviar-revision"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Publicar ({{insignia_id}})",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insignias/{{insignia_id}}/publicar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "{{insignia_id}}",
+                "publicar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Devolver ({{insignia_id}})",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"comentario\": \"Revisar la condición.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/insignias/{{insignia_id}}/devolver",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "{{insignia_id}}",
+                "devolver"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Borrar ({{insignia_id}})",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/insignias/{{insignia_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "insignias",
+                "{{insignia_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios App",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios-app",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios-app"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener (a-1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios-app/a-1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios-app",
+                "a-1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Suspender (a-1) · solo coordinador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"suspendida\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios-app/a-1/suspender",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "usuarios-app",
+                "a-1",
+                "suspender"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Equipo",
+      "item": [
+        {
+          "name": "Listar (solo coordinador)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/equipo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "equipo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Invitar (solo coordinador) · 201 incluye claveTemporal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo Editor\",\n  \"correo\": \"nuevo@xpand.co\",\n  \"rol\": \"editor\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/equipo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "equipo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cambiar rol (u-je)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rol\": \"coordinador\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/equipo/u-je/rol",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "equipo",
+                "u-je",
+                "rol"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Restablecer clave (u-je) · devuelve claveTemporal",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/equipo/u-je/restablecer-clave",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "equipo",
+                "u-je",
+                "restablecer-clave"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Estado (u-je) · activar/desactivar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/equipo/u-je/estado",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "equipo",
+                "u-je",
+                "estado"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ajustes",
+      "item": [
+        {
+          "name": "Obtener (solo coordinador)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/ajustes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "ajustes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar (solo coordinador)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mapbox\": { \"estilo\": \"Light v11\", \"zoom\": \"15.5\" },\n  \"territorio\": { \"barriosHabilitados\": \"10 de 17 del centro\" }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/ajustes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "ajustes"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Salud",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "health"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
